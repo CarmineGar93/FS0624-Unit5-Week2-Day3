@@ -33,7 +33,7 @@ public class AutoriService {
     }
 
     public Autore findAutoreById(UUID autoreId) {
-        return autoriRepository.findById(autoreId).orElseThrow(() -> new NotFoundException(autoreId));
+        return autoriRepository.findById(autoreId).orElseThrow(() -> new NotFoundException("L'autore", autoreId));
     }
 
     public Autore findAutoreByIdAndUpdate(UUID autoreId, AutorePayload body) {

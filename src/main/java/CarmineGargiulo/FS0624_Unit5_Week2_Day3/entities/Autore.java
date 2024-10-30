@@ -1,10 +1,8 @@
 package CarmineGargiulo.FS0624_Unit5_Week2_Day3.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -15,6 +13,7 @@ import java.util.UUID;
 @ToString
 @Entity
 @Table(name = "authors")
+@NoArgsConstructor
 public class Autore {
     @Id
     @GeneratedValue
@@ -30,6 +29,7 @@ public class Autore {
     private LocalDate dataDiNascita;
     private String avatar;
     @OneToMany(mappedBy = "autore")
+    @JsonIgnore
     private List<Blog> blogList;
 
     public Autore(String nome, String cognome, String email, String avatar) {

@@ -4,6 +4,7 @@ package CarmineGargiulo.FS0624_Unit5_Week2_Day3.entities;
 import CarmineGargiulo.FS0624_Unit5_Week2_Day3.enums.TipoBlog;
 import jakarta.persistence.*;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
@@ -14,6 +15,7 @@ import java.util.UUID;
 @ToString
 @Entity
 @Table(name = "blogs")
+@NoArgsConstructor
 public class Blog {
     @Id
     @GeneratedValue

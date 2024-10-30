@@ -37,7 +37,7 @@ public class BlogsService {
     }
 
     public Blog findBlogById(UUID blogId) {
-        return blogsRepository.findById(blogId).orElseThrow(() -> new NotFoundException(blogId));
+        return blogsRepository.findById(blogId).orElseThrow(() -> new NotFoundException("Il blog", blogId));
     }
 
     public Blog findBlogByIdAndUpdate(UUID blogId, BlogPayload body) {
