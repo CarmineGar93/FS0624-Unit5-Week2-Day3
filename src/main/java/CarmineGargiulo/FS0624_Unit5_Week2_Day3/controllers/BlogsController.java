@@ -8,6 +8,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/blogs")
@@ -21,7 +22,7 @@ public class BlogsController {
     }
 
     @GetMapping("/{blogId}")
-    public Blog getBlog(@PathVariable int blogId) {
+    public Blog getBlog(@PathVariable UUID blogId) {
         return blogsService.findBlogById(blogId);
     }
 
@@ -32,13 +33,13 @@ public class BlogsController {
     }
 
     @PutMapping("/{blogId}")
-    public Blog putBlog(@RequestBody BlogPayload body, @PathVariable int blogId) {
+    public Blog putBlog(@RequestBody BlogPayload body, @PathVariable UUID blogId) {
         return blogsService.findBlogByIdAndUpdate(blogId, body);
     }
 
     @DeleteMapping("/{blogId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void deleteBlog(@PathVariable int blogId) {
+    public void deleteBlog(@PathVariable UUID blogId) {
         blogsService.findBlogByIdAndDelete(blogId);
     }
 

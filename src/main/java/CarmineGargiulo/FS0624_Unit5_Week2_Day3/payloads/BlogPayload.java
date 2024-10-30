@@ -5,6 +5,8 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 
+import java.util.UUID;
+
 @Getter
 @Setter
 @AllArgsConstructor
@@ -14,4 +16,5 @@ public class BlogPayload {
     private String categoria;
     private String contenuto;
     private String tempoDiLettura;
+    private UUID autoreId;
 }

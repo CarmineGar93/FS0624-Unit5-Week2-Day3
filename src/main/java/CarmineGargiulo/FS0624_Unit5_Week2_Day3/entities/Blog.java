@@ -2,27 +2,40 @@ package CarmineGargiulo.FS0624_Unit5_Week2_Day3.entities;
 
 
 import CarmineGargiulo.FS0624_Unit5_Week2_Day3.enums.TipoBlog;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 
+import java.util.UUID;
+
 @Getter
 @Setter
 @ToString
+@Entity
+@Table(name = "blogs")
 public class Blog {
-    private static int count = 1;
-    private int id;
+    @Id
+    @GeneratedValue
+    private UUID id;
+    @Column(name = "title", nullable = false)
     private String titolo;
+    @Column(name = "category")
+    @Enumerated(EnumType.STRING)
     private TipoBlog categoria;
     private String cover;
+    @Column(name = "content", nullable = false)
     private String contenuto;
+    @Column(name = "read_time")
     private int tempoDiLettura;
+    @ManyToOne
+    @JoinColumn(name = "author_id")
+    private Autore autore;
 
-    public Blog(String titolo, String contenuto, int tempoDiLettura) {
-        this.id = count;
+    public Blog(String titolo, String contenuto, int tempoDiLettura, Autore autore) {
         this.titolo = titolo;
         this.contenuto = contenuto;
         this.tempoDiLettura = tempoDiLettura;
-        count++;
+        this.autore = autore;
     }
 }

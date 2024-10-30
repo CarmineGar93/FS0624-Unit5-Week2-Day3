@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/autori")
@@ -20,7 +21,7 @@ public class AutoriController {
     }
 
     @GetMapping("/{autoreId}")
-    public Autore getAutore(@PathVariable int autoreId) {
+    public Autore getAutore(@PathVariable UUID autoreId) {
         return autoriService.findAutoreById(autoreId);
     }
 
@@ -30,12 +31,12 @@ public class AutoriController {
     }
 
     @PutMapping("/{autoreId}")
-    public Autore modifyAutore(@PathVariable int autoreId, @RequestBody AutorePayload body) {
+    public Autore modifyAutore(@PathVariable UUID autoreId, @RequestBody AutorePayload body) {
         return autoriService.findAutoreByIdAndUpdate(autoreId, body);
     }
 
     @DeleteMapping("/{autoreId}")
-    public void deleteAutore(@PathVariable int autoreId) {
+    public void deleteAutore(@PathVariable UUID autoreId) {
         autoriService.findAutoreByIdAndDelete(autoreId);
     }
 }
