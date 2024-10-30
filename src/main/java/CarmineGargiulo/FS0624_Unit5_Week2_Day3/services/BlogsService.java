@@ -26,23 +26,31 @@ public class BlogsService {
     private AutoriService autoriService;
 
     public Page<Blog> findAll(int page, int size, String orderBy) {
+        if (size > 50) size = 50;
         Pageable pageable = PageRequest.of(page, size, Sort.by(orderBy));
         return blogsRepository.findAll(pageable);
     }
 
     public Blog saveBlog(BlogPayload body) {
+        if (body.getTitolo() == null || body.getAutoreId() == null || body.getContenuto() == null)
+            throw new BadRequestException("Formato JSON non supportato");
         try {
             Autore autore = autoriService.findAutoreById(body.getAutoreId());
-            Blog blog = new Blog(body.getTitolo(), body.getContenuto(), Integer.parseInt(body.getTempoDiLettura()),
-                    autore);
-            List<TipoBlog> tipi = Arrays.stream(TipoBlog.values()).toList();
-            List<String> tipiString = List.of("PERSONALE", "MULTIMEDIALE", "GENERICO", "AZIENDALE", "NOTIZIE");
-            if (!tipiString.contains(body.getCategoria().toUpperCase())) blog.setCategoria(TipoBlog.GENERICO);
-            else blog.setCategoria(tipi.get(tipiString.indexOf(body.getCategoria().toUpperCase())));
+            Blog blog = new Blog(body.getTitolo(), body.getContenuto(), autore);
             blog.setCover("https://placedog.net/200/200");
+            if (body.getTempoDiLettura() != null) blog.setTempoDiLettura(Integer.parseInt(body.getTempoDiLettura()));
+            if (body.getCategoria() != null) {
+                List<TipoBlog> tipi = Arrays.stream(TipoBlog.values()).toList();
+                List<String> tipiString = List.of("PERSONALE", "MULTIMEDIALE", "GENERICO", "AZIENDALE", "NOTIZIE");
+                if (!tipiString.contains(body.getCategoria().toUpperCase()))
+                    throw new BadRequestException("Categoria non supportata");
+                else blog.setCategoria(tipi.get(tipiString.indexOf(body.getCategoria().toUpperCase())));
+            }
             return blogsRepository.save(blog);
         } catch (NotFoundException e) {
             throw new BadRequestException("Non esiste nessun utente con id " + body.getAutoreId());
+        } catch (NumberFormatException e) {
+            throw new BadRequestException("Tempo di lettura deve essere un numero intero");
         }
     }
 
@@ -60,11 +68,20 @@ public class BlogsService {
         }
         blog.setTitolo(body.getTitolo());
         blog.setContenuto(body.getContenuto());
-        blog.setTempoDiLettura(Integer.parseInt(body.getTempoDiLettura()));
-        List<TipoBlog> tipi = Arrays.stream(TipoBlog.values()).toList();
-        List<String> tipiString = List.of("PERSONALE", "MULTIMEDIALE", "GENERICO", "AZIENDALE", "NOTIZIE");
-        if (!tipiString.contains(body.getCategoria().toUpperCase())) blog.setCategoria(TipoBlog.GENERICO);
-        else blog.setCategoria(tipi.get(tipiString.indexOf(body.getCategoria().toUpperCase())));
+        if (body.getTempoDiLettura() != null) {
+            try {
+                blog.setTempoDiLettura(Integer.parseInt(body.getTempoDiLettura()));
+            } catch (NumberFormatException e) {
+                throw new BadRequestException("Tempo di lettura deve essere un numero intero");
+            }
+        }
+        if (body.getCategoria() != null) {
+            List<TipoBlog> tipi = Arrays.stream(TipoBlog.values()).toList();
+            List<String> tipiString = List.of("PERSONALE", "MULTIMEDIALE", "GENERICO", "AZIENDALE", "NOTIZIE");
+            if (!tipiString.contains(body.getCategoria().toUpperCase()))
+                throw new BadRequestException("Categoria non supportata");
+            else blog.setCategoria(tipi.get(tipiString.indexOf(body.getCategoria().toUpperCase())));
+        }
         return blogsRepository.save(blog);
     }
 

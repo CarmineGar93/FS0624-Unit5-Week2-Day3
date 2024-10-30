@@ -27,7 +27,7 @@ public class AutoriService {
 
     public Autore saveAutore(AutorePayload body) {
         if (body.getDataDiNascita() == null || body.getCognome() == null || body.getEmail() == null || body.getNome() == null)
-            throw new BadRequestException("Formato JSON errato");
+            throw new BadRequestException("Formato JSON non supportato");
         if (autoriRepository.existsByEmail(body.getEmail()))
             throw new BadRequestException("Email " + body.getEmail() + " già in uso");
         Autore autore = new Autore(body.getNome(), body.getCognome(), body.getEmail(), "https://ui-avatars" +
@@ -42,6 +42,8 @@ public class AutoriService {
     }
 
     public Autore findAutoreByIdAndUpdate(UUID autoreId, AutorePayload body) {
+        if (body.getDataDiNascita() == null || body.getCognome() == null || body.getEmail() == null || body.getNome() == null)
+            throw new BadRequestException("Formato JSON errato");
         Autore autore = findAutoreById(autoreId);
         if (!autore.getEmail().equals(body.getEmail())) {
             if (autoriRepository.existsByEmail(body.getEmail()))
