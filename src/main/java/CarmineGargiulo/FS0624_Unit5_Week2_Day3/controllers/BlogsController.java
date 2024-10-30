@@ -4,10 +4,10 @@ import CarmineGargiulo.FS0624_Unit5_Week2_Day3.entities.Blog;
 import CarmineGargiulo.FS0624_Unit5_Week2_Day3.payloads.BlogPayload;
 import CarmineGargiulo.FS0624_Unit5_Week2_Day3.services.BlogsService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 import java.util.UUID;
 
 @RestController
@@ -17,8 +17,10 @@ public class BlogsController {
     private BlogsService blogsService;
 
     @GetMapping
-    public List<Blog> getBlogs() {
-        return blogsService.findAll();
+    public Page<Blog> getBlogs(@RequestParam(defaultValue = "0") int page,
+                               @RequestParam(defaultValue = "10") int size,
+                               @RequestParam(defaultValue = "id") String sortBy) {
+        return blogsService.findAll(page, size, sortBy);
     }
 
     @GetMapping("/{blogId}")
