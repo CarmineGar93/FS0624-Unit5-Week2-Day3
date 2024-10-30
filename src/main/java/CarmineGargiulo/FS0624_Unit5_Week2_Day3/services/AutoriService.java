@@ -1,6 +1,7 @@
 package CarmineGargiulo.FS0624_Unit5_Week2_Day3.services;
 
 import CarmineGargiulo.FS0624_Unit5_Week2_Day3.entities.Autore;
+import CarmineGargiulo.FS0624_Unit5_Week2_Day3.exceptions.BadRequestException;
 import CarmineGargiulo.FS0624_Unit5_Week2_Day3.exceptions.NotFoundException;
 import CarmineGargiulo.FS0624_Unit5_Week2_Day3.payloads.AutorePayload;
 import CarmineGargiulo.FS0624_Unit5_Week2_Day3.repositories.AutoriRepository;
@@ -25,6 +26,10 @@ public class AutoriService {
     }
 
     public Autore saveAutore(AutorePayload body) {
+        if (body.getDataDiNascita() == null || body.getCognome() == null || body.getEmail() == null || body.getNome() == null)
+            throw new BadRequestException("Formato JSON errato");
+        if (autoriRepository.existsByEmail(body.getEmail()))
+            throw new BadRequestException("Email " + body.getEmail() + " già in uso");
         Autore autore = new Autore(body.getNome(), body.getCognome(), body.getEmail(), "https://ui-avatars" +
                 ".com/api/?name=" + body.getNome() + "+" + body.getCognome());
         autore.setDataDiNascita(LocalDate.parse(body.getDataDiNascita(), formatter));
@@ -38,9 +43,13 @@ public class AutoriService {
 
     public Autore findAutoreByIdAndUpdate(UUID autoreId, AutorePayload body) {
         Autore autore = findAutoreById(autoreId);
+        if (!autore.getEmail().equals(body.getEmail())) {
+            if (autoriRepository.existsByEmail(body.getEmail()))
+                throw new BadRequestException("Email " + body.getEmail() + " già in uso");
+            else autore.setEmail(body.getEmail());
+        }
         autore.setNome(body.getNome());
         autore.setCognome(body.getCognome());
-        autore.setEmail(body.getEmail());
         autore.setAvatar("https://ui-avatars.com/api/?name=" + autore.getNome() + "+" + autore.getCognome());
         autore.setDataDiNascita(LocalDate.parse(body.getDataDiNascita(), formatter));
         return autoriRepository.save(autore);
