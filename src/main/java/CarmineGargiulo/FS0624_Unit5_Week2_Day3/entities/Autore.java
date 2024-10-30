@@ -30,6 +30,7 @@ public class Autore {
     private String avatar;
     @OneToMany(mappedBy = "autore", cascade = CascadeType.REMOVE)
     @JsonIgnore
+    /*@JsonIgnoreProperties("autore")*/
     private List<Blog> blogList;
 
     public Autore(String nome, String cognome, String email, String avatar) {

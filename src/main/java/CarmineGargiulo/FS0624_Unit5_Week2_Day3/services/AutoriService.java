@@ -10,16 +10,17 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.List;
-import java.util.Locale;
 import java.util.UUID;
 
 @Service
 public class AutoriService {
     @Autowired
     private AutoriRepository autoriRepository;
-    private DateTimeFormatter formatter = DateTimeFormatter.ofPattern("EEE MMM dd yyyy HH:mm:ss 'GMT'Z '('zzzz')'",
-            Locale.ENGLISH);
+
+    @Autowired
+    private List<DateTimeFormatter> formatters;
 
     public List<Autore> findAll() {
         return autoriRepository.findAll();
@@ -32,7 +33,16 @@ public class AutoriService {
             throw new BadRequestException("Email " + body.getEmail() + " già in uso");
         Autore autore = new Autore(body.getNome(), body.getCognome(), body.getEmail(), "https://ui-avatars" +
                 ".com/api/?name=" + body.getNome() + "+" + body.getCognome());
-        autore.setDataDiNascita(LocalDate.parse(body.getDataDiNascita(), formatter));
+        boolean converted = false;
+        for (DateTimeFormatter formatter : formatters) {
+            try {
+                autore.setDataDiNascita(LocalDate.parse(body.getDataDiNascita(), formatter));
+                converted = true;
+            } catch (DateTimeParseException ignored) {
+
+            }
+        }
+        if (!converted) throw new BadRequestException("Formato data non supportato");
         return autoriRepository.save(autore);
 
     }
@@ -53,7 +63,16 @@ public class AutoriService {
         autore.setNome(body.getNome());
         autore.setCognome(body.getCognome());
         autore.setAvatar("https://ui-avatars.com/api/?name=" + autore.getNome() + "+" + autore.getCognome());
-        autore.setDataDiNascita(LocalDate.parse(body.getDataDiNascita(), formatter));
+        boolean converted = false;
+        for (DateTimeFormatter formatter : formatters) {
+            try {
+                autore.setDataDiNascita(LocalDate.parse(body.getDataDiNascita(), formatter));
+                converted = true;
+            } catch (DateTimeParseException ignored) {
+
+            }
+        }
+        if (!converted) throw new BadRequestException("Formato data non supportato");
         return autoriRepository.save(autore);
     }
 
